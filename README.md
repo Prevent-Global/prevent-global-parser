@@ -1,0 +1,2 @@
+# PreventGlobal
+prevent.global
