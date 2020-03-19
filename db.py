@@ -144,3 +144,33 @@ def delete_all_visits(conn):
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()
+
+def select_place_by_coordinates(conn, coordinates):
+    """
+    Query places by coordinates
+    :param conn: the Connection object
+    :param coordinates: a tuple (latE7, lonE7) of (int, int)
+    :return: a list of places
+    """
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM places WHERE latE7=? and lonE7=?", coordinates)
+
+    return cur.fetchall()
+
+def select_place_by_coordinates(conn, coordinates):
+    """
+    Query places by coordinates
+    :param conn: the Connection object
+    :param coordinates: a tuple (latE7, lonE7) of (int, int)
+    :return: a list of places
+    """
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM places WHERE latE7=? and lonE7=?", coordinates)
+
+    places = cur.fetchall()
+    if len(places) == 1:
+        return places[0]
+
+    return None
