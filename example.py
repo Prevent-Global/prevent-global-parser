@@ -1,4 +1,5 @@
-from utils import heatmap, person, parse_file
+from parse import parse_file
+from colocations import heatmap, person
 import googlemaps
 import os
 
@@ -14,14 +15,17 @@ h = heatmap()
 p = person()
 
 for filename in filenames:
-    parse_file(folder+filename, p, h)
+    visits = parse_file(folder+filename)
+    p.add_visits(visits)
+    h.add_visits(visits)
 
 h1 = heatmap()
 p1 = person()
 
-
 for filename in filenames[:3]:
-    parse_file(folder+filename, p1, h1)
+    visits = parse_file(folder+filename)
+    p1.add_visits(visits)
+    h1.add_visits(visits)
 
 c = h.compare_person(p1)
 

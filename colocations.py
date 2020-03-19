@@ -64,6 +64,10 @@ class heatmap:
 
         self.places[v.address].add_interval(v.times)
 
+    def add_visits(self, visits):
+            for v in visits:
+                self.add_visit(v)
+
     def compare_visit(self, v):
         if v.address in self.places.keys():
             overlap = self.places[v.address].compute_overlap_with_interval(v.times)
@@ -90,6 +94,11 @@ class person:
 
     def add_visit(self, visit):
         self.visits.append(visit)
+
+    def add_visits(self, visits):
+        for v in visits:
+            self.add_visit(v)
+
 
 def extract_overlap(person, heatmap):
 #     Computes the timeline of colocation of person with all people used to create the heatmap

@@ -3,6 +3,7 @@ from lxml import etree
 from datetime import datetime, timedelta
 import googlemaps
 import os
+from colocations import visit
 
 API_key = os.environ.get('API_key')
 
@@ -50,3 +51,5 @@ def parse_file(filename):
 # We need to check whether it work on files exported for other people as well
             if child[3].text.startswith('  '):
                 visits.append(visit(get_times(child), get_coordinates(child), get_place(child)))
+
+    return visits
