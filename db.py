@@ -3,7 +3,7 @@ from sqlite3 import Error
 
 
 def create_db(db_file='prevent.db'):
-    """ create a database connection to the SQLite database specified by db_file
+    """ create a database specified by db_file
     :param db_file: database file
     :return:
     """
@@ -74,6 +74,15 @@ def create_visits_table(conn):
                                 ); """
 
     create_table(conn, sql_create_visits_table)
+
+def setup(db_file='prevent.db'):
+    """ create a database and add places and visits tables
+    :param db_file: database file
+    :return:
+    """
+    conn = create_connection(db_file)
+    create_places_table(conn)
+    create_visits_table(conn)
 
 def add_place(conn, place):
     """
