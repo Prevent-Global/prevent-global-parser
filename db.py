@@ -99,5 +99,48 @@ def add_visit(conn, visit):
     cur.execute(sql, visit)
     return cur.lastrowid
 
+def delete_place(conn, id):
+    """
+    Delete a place by place id
+    :param conn:  Connection to the SQLite database
+    :param id: id of the place
+    :return:
+    """
+    sql = 'DELETE FROM places WHERE id=?'
+    cur = conn.cursor()
+    cur.execute(sql, (id,))
+    conn.commit()
 
+def delete_visit(conn, id):
+    """
+    Delete a visit by visit id
+    :param conn:  Connection to the SQLite database
+    :param id: id of the visits
+    :return:
+    """
+    sql = 'DELETE FROM visits WHERE id=?'
+    cur = conn.cursor()
+    cur.execute(sql, (id,))
+    conn.commit()
 
+def delete_all_places(conn):
+    """
+    Delete all rows in the places table
+    :param conn: Connection to the SQLite database
+    :return:
+    """
+    sql = 'DELETE FROM places'
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+
+def delete_all_visits(conn):
+    """
+    Delete all rows in the visits table
+    :param conn: Connection to the SQLite database
+    :return:
+    """
+    sql = 'DELETE FROM visits'
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
