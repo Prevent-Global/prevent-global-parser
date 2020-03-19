@@ -3,7 +3,9 @@ from lxml import etree
 from datetime import datetime, timedelta
 import googlemaps
 import os
+
 from colocations import visit
+from db import create_connection, add_place, add_visit, find_place_id
 
 API_key = os.environ.get('API_key')
 
@@ -20,18 +22,18 @@ def load_KML(filename):
 def get_times(node):
 # input: 'Placemark' event
     temp = node[3].text.split('from ')[1].split('.')[0]
-    starting_time = datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S')
+    starting_time = int(datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S').timestamp())
 
     temp = node[3].text.split(' to ')[1].split('.')[0]
-    end_time = datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S')
+    end_time = int(datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S').timestamp())
     return(starting_time, end_time)
 
 
 def get_coordinates(node):
-# Need to be reverted for the purpose of googlemaps API compatibility
-# (BTW: wtf? It's exported from other Google service...)
-    coordinates = node[4][0].text.split(',')[1]+','+node[4][0].text.split(',')[0]
-    return(coordinates)
+    # TODO is it correct or should be the other way around?
+    lat = float(node[4][0].text.split(',')[0])
+    lon = float(node[4][0].text.split(',')[1])
+    return (lat, lon)
 
 
 def get_place(node):
@@ -53,3 +55,17 @@ def parse_file(filename):
                 visits.append(visit(get_times(child), get_coordinates(child), get_place(child)))
 
     return visits
+
+def parse_file_add_to_db(filename):
+    conn = create_connection()
+    visits = parse_file(filename)
+    for v in visits:
+        place = (v.coordinates[0]*1e7, v.coordinates[1]*1e7, v.address)
+        place_id = find_place_id(conn, place)
+        if place_id is None:
+            place_id = add_place(conn, place)
+        beg = v.times[0]
+        end = v.times[1]
+        add_visit(conn, (place_id, beg, end))
+
+    conn.commit()

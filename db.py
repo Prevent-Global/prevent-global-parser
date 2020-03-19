@@ -68,8 +68,8 @@ def create_visits_table(conn):
     sql_create_visits_table = """ CREATE TABLE IF NOT EXISTS visits (
                                     id integer PRIMARY KEY,
                                     place_id integer NOT NULL,
-                                    begMS integer NOT NULL,
-                                    endMS integer NOT NULL,
+                                    beg integer NOT NULL,
+                                    end integer NOT NULL,
                                     FOREIGN KEY (place_id) REFERENCES places (id)
                                 ); """
 
@@ -100,10 +100,10 @@ def add_visit(conn, visit):
     """
     Create a new visit in the visits table
     :param conn:
-    :param visit: a triple(place_id, begMS, endMS)
+    :param visit: a triple(place_id, beg, end)
     :return: visit id
     """
-    sql = ''' INSERT INTO visits(place_id, begMS, endMS) VALUES(?,?,?) '''
+    sql = ''' INSERT INTO visits(place_id, beg, end) VALUES(?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, visit)
     return cur.lastrowid
@@ -178,8 +178,47 @@ def select_place_by_coordinates(conn, coordinates):
     cur = conn.cursor()
     cur.execute("SELECT * FROM places WHERE latE7=? and lonE7=?", coordinates)
 
+    return cur.fetchall()
+
+def find_place_id(conn, place):
+    """
+    Query places to find the place id
+    :param conn:
+    :param place: a triple (latE7, lonE7, address)
+    :return: place id
+    """
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM places WHERE latE7=? and lonE7=? and address=?", place)
+
     places = cur.fetchall()
-    if len(places) == 1:
-        return places[0]
+    if len(places):
+        return places[0][0]
 
     return None
+
+def select_all_places(conn):
+    """
+    Select all rows in the places table
+    :param conn: Connection to the SQLite database
+    :return: all rows in places table
+    """
+
+    sql = 'SELECT * FROM places'
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
+def select_all_visits(conn):
+    """
+    Select all rows in the visits table
+    :param conn: Connection to the SQLite database
+    :return: all rows in visits table
+    """
+
+    sql = 'SELECT * FROM visits'
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
