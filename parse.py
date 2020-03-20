@@ -32,8 +32,8 @@ def get_times(node):
 
 def get_coordinates(node):
     # TODO is it correct or should be the other way around?
-    lat = float(node[4][0].text.split(',')[0])
-    lon = float(node[4][0].text.split(',')[1])
+    lon = float(node[4][0].text.split(',')[0])
+    lat = float(node[4][0].text.split(',')[1])
     return (lat, lon)
 
 
