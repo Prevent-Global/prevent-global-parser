@@ -95,6 +95,26 @@ def create_visits_table(conn):
 
     create_table(conn, sql_create_visits_table)
 
+def create_colocations_table(conn):
+    """ create a colocations table
+    :param conn: Connection object
+    :return:
+    """
+
+    sql_create_colocations_table = """ CREATE TABLE IF NOT EXISTS colocations(
+                                    id integer PRIMARY KEY,
+                                    infected_id NOT NULL,
+                                    subject_id integer NOT NULL,
+                                    place_id integer NOT NULL,
+                                    beg integer NOT NULL,
+                                    end integer NOT NULL,
+                                    FOREIGN KEY (infected_id) REFERENCES subjects (infected_id),
+                                    FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
+                                    FOREIGN KEY (place_id) REFERENCES places (id)
+                                ); """
+
+    create_table(conn, sql_create_colocations_table)
+
 def setup(db_file='prevent.db'):
     """ create a database and add places and visits tables
     :param db_file: database file
@@ -104,6 +124,7 @@ def setup(db_file='prevent.db'):
     create_places_table(conn)
     create_subjects_table(conn)
     create_visits_table(conn)
+    create_colocations_table(conn)
 
 def add_place(conn, place):
     """
@@ -139,6 +160,18 @@ def add_visit(conn, visit):
     sql = '''INSERT INTO visits(place_id, subject_id, beg, end) VALUES (?, ?, ?, ?)'''
     cur = conn.cursor()
     cur.execute(sql, visit)
+    return cur.lastrowid
+
+def add_colocation(conn, colocation):
+    """
+    Create a new colocation in the colocations table
+    :param conn:
+    :param colocation: a tuple(infected_id, subject_id, place_id, beg, end)
+    :return: colocation id
+    """
+    sql = '''INSERT INTO colocations(infected_id, subject_id, place_id, beg, end) VALUES (?, ?, ?, ?)'''
+    cur = conn.cursor()
+    cur.execute(sql, colocation)
     return cur.lastrowid
 
 def delete_place(conn, id):
@@ -177,6 +210,18 @@ def delete_visit(conn, id):
     cur.execute(sql, (id,))
     conn.commit()
 
+def delete_colocation(conn, id):
+    """
+    Delete a colocation from the colocations table
+    :param conn:  Connection to the SQLite database
+    :param id: id of the colocation
+    :return:
+    """
+    sql = 'DELETE FROM colocation WHERE id=?'
+    cur = conn.cursor()
+    cur.execute(sql, (id,))
+    conn.commit()
+
 def delete_all_places(conn):
     """
     Delete all rows in the places table
@@ -206,6 +251,17 @@ def delete_all_visits(conn):
     :return:
     """
     sql = 'DELETE FROM visits'
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+
+def delete_all_colocations(conn):
+    """
+    Delete all rows in the colocations table
+    :param conn: Connection to the SQLite database
+    :return:
+    """
+    sql = 'DELETE FROM colocations'
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()
