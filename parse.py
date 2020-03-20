@@ -55,7 +55,7 @@ def parse_file(filename):
 
     return visits
 
-def parse_file_add_to_db(filename):
+def parse_file_add_to_db(filename, subject_ID, info):
     conn = db.create_connection()
     visits = parse_file(filename)
     for v in visits:
@@ -68,3 +68,16 @@ def parse_file_add_to_db(filename):
         db.add_visit(conn, (place_id, beg, end))
 
     conn.commit()
+
+def parse_folder(path):
+    filenames = os.listdir(path)
+    subject_ID = path.split('/')[-1]
+    with open(path+'/userInfo.json', 'r') as f:
+        info = json.load(f)
+    
+    for filename in filenames:
+        if not filename.startswith('userInfo'):
+            parse_file_add_to_db(path+filename, subject_ID, info)
+
+
+
