@@ -1,4 +1,4 @@
-from parse import parse_file_add_to_db, parse_file
+from parse import parse_subject_dir
 import os
 from glob import glob
 
@@ -9,12 +9,11 @@ def build_db():
     os.remove('prevent.db')
     db.setup()
 
-    for fn in glob('sample_files/*kml'):
-        parse_file_add_to_db(fn)
+    parse_subject_dir('sample_files/1')
 
 build_db()
 
-subject_history = glob('sample_files/*kml')[3:]
+subject_history = glob('sample_files/2/*kml')
 s = subject(subject_history)
 
 c = find_colocations(s)

@@ -1,3 +1,5 @@
+import json
+from glob import glob
 from pykml import parser
 from lxml import etree
 from datetime import datetime, timedelta
@@ -57,10 +59,9 @@ def parse_file(filename):
 
 def parse_file_add_to_db(filename, subject_id, info):
     conn = db.create_connection()
-    if db.contains_subject(conn, subject_id):
-        return
+    if not db.contains_subject(conn, subject_id):
+        db.add_subject(conn, (subject_id, info['age'], info['weight'], info['country'], info['tested'], info['testedPositive'], info['assessmentResult']))
 
-    db.add_subject(conn, (subject_id, info['age'], info['weight'], info['country'], info['tested'], info['testedPositive'], info['assessmentResult']))
 
     visits = parse_file(filename)
     for v in visits:
@@ -74,9 +75,9 @@ def parse_file_add_to_db(filename, subject_id, info):
 
     conn.commit()
 
-def parse_folder(path):
-    subject_ID = path.split('/')[-1]
-    with open(path+'/userInfo.json', 'r') as f:
+def parse_subject_dir(path):
+    subject_ID = int(path.split('/')[-1])
+    with open(path+'/subject_info.json', 'r') as f:
         info = json.load(f)
 
     for fn in glob(path + "/*kml"):

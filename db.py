@@ -66,7 +66,7 @@ def create_subjects_table(conn):
     """
 
     sql_create_subjects_table = """ CREATE TABLE IF NOT EXISTS subjects(
-                                    subject_id PRIMARY KEY,
+                                    subject_id integer PRIMARY KEY,
                                     age integer,
                                     weight integer,
                                     country text,
@@ -90,7 +90,7 @@ def create_visits_table(conn):
                                     beg integer NOT NULL,
                                     end integer NOT NULL,
                                     FOREIGN KEY (place_id) REFERENCES places (id),
-                                    FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
+                                    FOREIGN KEY (subject_id) REFERENCES subjects (subject_id)
                                 ); """
 
     create_table(conn, sql_create_visits_table)
@@ -112,7 +112,7 @@ def add_place(conn, place):
     :param place: a triple (latE7, lonE7, address)
     :return: place id
     """
-    sql = ''' INSERT INTO places VALUES '''
+    sql = '''INSERT INTO places(latE7, lonE7, address) VALUES (?, ?, ?)'''
     cur = conn.cursor()
     cur.execute(sql, place)
     return cur.lastrowid
@@ -124,9 +124,9 @@ def add_subject(conn, subject):
     :param subject: a tuple (subject_id, age, wieght, country, tested, testedPositive, assessmentResult)
     :return: subject_id
     """
-    sql = ''' INSERT INTO subjects VALUES '''
+    sql = '''INSERT INTO subjects VALUES (?, ?, ?, ?, ?, ?, ?)'''
     cur = conn.cursor()
-    cur.execute(sql, place)
+    cur.execute(sql, subject)
     return cur.lastrowid
 
 def add_visit(conn, visit):
@@ -136,7 +136,7 @@ def add_visit(conn, visit):
     :param visit: a triple(place_id, subject_id, beg, end)
     :return: visit id
     """
-    sql = ''' INSERT INTO visits VALUES '''
+    sql = '''INSERT INTO visits(place_id, subject_id, beg, end) VALUES (?, ?, ?, ?)'''
     cur = conn.cursor()
     cur.execute(sql, visit)
     return cur.lastrowid
@@ -320,6 +320,6 @@ def select_visits_by_place(conn, place_id):
     """
 
     cur = conn.cursor()
-    cur.execute("SELECT * FROM places WHERE place_id=?", (place_id,))
+    cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
 
     return cur.fetchall()

@@ -1,0 +1,8 @@
+{
+    "age": 33,
+    "weight": 80,
+    "country": "Poland",
+    "tested": true,
+    "testedPositive": true,
+    "assessmentResult": 0
+}
