@@ -70,14 +70,12 @@ def parse_file_add_to_db(filename, subject_ID, info):
     conn.commit()
 
 def parse_folder(path):
-    filenames = os.listdir(path)
     subject_ID = path.split('/')[-1]
     with open(path+'/userInfo.json', 'r') as f:
         info = json.load(f)
     
-    for filename in filenames:
-        if not filename.startswith('userInfo'):
-            parse_file_add_to_db(path+filename, subject_ID, info)
+    for fn in glob(path + "/*kml"):
+        parse_file_add_to_db(fn, subject_ID, info)
 
 
 
