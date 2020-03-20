@@ -234,8 +234,23 @@ def contains_place(conn, place_id):
     cur = conn.cursor()
     cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
 
-    places = cur.fetchall()
-    if len(places):
+    if len(cur.fetchall()):
+        return True
+
+    return False
+
+def contains_subject(conn, subject_id):
+    """
+    Checks if subject_id is in the db
+    :param conn:
+    :param subject_id:
+    :return: bool
+    """
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM subjects WHERE subject_id=?", (subject_id,))
+
+    if len(cur.fetchall()):
         return True
 
     return False

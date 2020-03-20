@@ -55,8 +55,13 @@ def parse_file(filename):
 
     return visits
 
-def parse_file_add_to_db(filename, subject_ID, info):
+def parse_file_add_to_db(filename, subject_id, info):
     conn = db.create_connection()
+    if db.contains_subject(conn, subject_id):
+        return
+
+    db.add_subject(conn, (subject_id, info['age'], info['weight'], info['country'], info['tested'], info['testedPositive'], info['assessmentResult']))
+
     visits = parse_file(filename)
     for v in visits:
         place = (v[0][0]*1e7, v[0][1]*1e7, v[2])
@@ -65,7 +70,7 @@ def parse_file_add_to_db(filename, subject_ID, info):
             place_id = db.add_place(conn, place)
         beg = v[1][0]
         end = v[1][1]
-        db.add_visit(conn, (place_id, beg, end))
+        db.add_visit(conn, (place_id, subject_id, beg, end))
 
     conn.commit()
 
@@ -74,7 +79,7 @@ def parse_folder(path):
     subject_ID = path.split('/')[-1]
     with open(path+'/userInfo.json', 'r') as f:
         info = json.load(f)
-    
+
     for filename in filenames:
         if not filename.startswith('userInfo'):
             parse_file_add_to_db(path+filename, subject_ID, info)
