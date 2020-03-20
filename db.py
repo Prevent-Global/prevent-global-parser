@@ -167,18 +167,22 @@ def select_place_by_coordinates(conn, coordinates):
 
     return cur.fetchall()
 
-def select_place_by_coordinates(conn, coordinates):
+def contains_place(conn, place_id):
     """
-    Query places by coordinates
-    :param conn: the Connection object
-    :param coordinates: a tuple (latE7, lonE7) of (int, int)
-    :return: a list of places
+    Checks if place id is in the db
+    :param conn:
+    :param place_id:
+    :return: bool
     """
 
     cur = conn.cursor()
-    cur.execute("SELECT * FROM places WHERE latE7=? and lonE7=?", coordinates)
+    cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
 
-    return cur.fetchall()
+    places = cur.fetchall()
+    if len(places):
+        return True
+
+    return False
 
 def find_place_id(conn, place):
     """
@@ -220,5 +224,18 @@ def select_all_visits(conn):
     sql = 'SELECT * FROM visits'
     cur = conn.cursor()
     cur.execute(sql)
+
+    return cur.fetchall()
+
+def select_visits_by_place(conn, place_id):
+    """
+    Query visits by the place id
+    :param conn: the Connection object
+    :param place_id:
+    :return: a list of visits in the place id
+    """
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
 
     return cur.fetchall()

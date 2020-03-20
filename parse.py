@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 import googlemaps
 import os
 
-from colocations import visit
-from db import create_connection, add_place, add_visit, find_place_id
+import db
 
 API_key = os.environ.get('API_key')
 
@@ -52,20 +51,20 @@ def parse_file(filename):
 # Searching for double space is a dirty trick, bt there is no keyword like 'visit' or 'stay;
 # We need to check whether it work on files exported for other people as well
             if child[3].text.startswith('  '):
-                visits.append(visit(get_times(child), get_coordinates(child), get_place(child)))
+                visits.append((get_coordinates(child), get_times(child), get_place(child)))
 
     return visits
 
 def parse_file_add_to_db(filename):
-    conn = create_connection()
+    conn = db.create_connection()
     visits = parse_file(filename)
     for v in visits:
-        place = (v.coordinates[0]*1e7, v.coordinates[1]*1e7, v.address)
-        place_id = find_place_id(conn, place)
+        place = (v[0][0]*1e7, v[0][1]*1e7, v[2])
+        place_id = db.find_place_id(conn, place)
         if place_id is None:
-            place_id = add_place(conn, place)
-        beg = v.times[0]
-        end = v.times[1]
-        add_visit(conn, (place_id, beg, end))
+            place_id = db.add_place(conn, place)
+        beg = v[1][0]
+        end = v[1][1]
+        db.add_visit(conn, (place_id, beg, end))
 
     conn.commit()

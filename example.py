@@ -1,33 +1,23 @@
-from parse import parse_file
-from colocations import heatmap, person
-import googlemaps
+from parse import parse_file_add_to_db, parse_file
 import os
+from glob import glob
 
+from colocations import subject, find_colocations
+import db
 
-API_key = os.environ.get('API_key')
+def build_db():
+    os.remove('prevent.db')
+    db.setup()
 
-gmaps = googlemaps.Client(key = API_key)
+    for fn in glob('sample_files/*kml'):
+        parse_file_add_to_db(fn)
 
-folder = 'sample_files/'
-filenames = os.listdir(folder)
+build_db()
 
-h = heatmap()
-p = person()
+subject_history = glob('sample_files/*kml')[3:]
+s = subject(subject_history)
 
-for filename in filenames:
-    visits = parse_file(folder+filename)
-    p.add_visits(visits)
-    h.add_visits(visits)
-
-h1 = heatmap()
-p1 = person()
-
-for filename in filenames[:3]:
-    visits = parse_file(folder+filename)
-    p1.add_visits(visits)
-    h1.add_visits(visits)
-
-c = h.compare_person(p1)
+c = find_colocations(s)
 
 for key in c.colocations:
     print(c.colocations[key].address, c.colocations[key].timeline.intervals[0])
