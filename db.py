@@ -59,6 +59,24 @@ def create_places_table(conn):
 
     create_table(conn, sql_create_places_table)
 
+def create_subjects_table(conn):
+    """ create a subjects table
+    :param conn: Connection object
+    :return:
+    """
+
+    sql_create_subjects_table = """ CREATE TABLE IF NOT EXISTS subjects(
+                                    subject_id PRIMARY KEY,
+                                    age integer,
+                                    weight integer,
+                                    country text,
+                                    tested boolean NOT NULL,
+                                    testedPositive boolean NOT NULL,
+                                    assessmentResult integer NOT NULL
+                                ); """
+
+    create_table(conn, sql_create_subjects_table)
+
 def create_visits_table(conn):
     """ create a visits table
     :param conn: Connection object
@@ -68,9 +86,11 @@ def create_visits_table(conn):
     sql_create_visits_table = """ CREATE TABLE IF NOT EXISTS visits (
                                     id integer PRIMARY KEY,
                                     place_id integer NOT NULL,
+                                    subject_id integer NOT NULL,
                                     beg integer NOT NULL,
                                     end integer NOT NULL,
-                                    FOREIGN KEY (place_id) REFERENCES places (id)
+                                    FOREIGN KEY (place_id) REFERENCES places (id),
+                                    FOREIGN KEY (subject_id) REFERENCES subjects (subject_id),
                                 ); """
 
     create_table(conn, sql_create_visits_table)
@@ -82,6 +102,7 @@ def setup(db_file='prevent.db'):
     """
     conn = create_connection(db_file)
     create_places_table(conn)
+    create_subjects_table(conn)
     create_visits_table(conn)
 
 def add_place(conn, place):
@@ -91,7 +112,19 @@ def add_place(conn, place):
     :param place: a triple (latE7, lonE7, address)
     :return: place id
     """
-    sql = ''' INSERT INTO places(latE7, lonE7, address) VALUES(?,?,?) '''
+    sql = ''' INSERT INTO places VALUES '''
+    cur = conn.cursor()
+    cur.execute(sql, place)
+    return cur.lastrowid
+
+def add_subject(conn, subject):
+    """
+    Create a new subject in the subjects table
+    :param conn:
+    :param subject: a tuple (subject_id, age, wieght, country, tested, testedPositive, assessmentResult)
+    :return: subject_id
+    """
+    sql = ''' INSERT INTO subjects VALUES '''
     cur = conn.cursor()
     cur.execute(sql, place)
     return cur.lastrowid
@@ -100,10 +133,10 @@ def add_visit(conn, visit):
     """
     Create a new visit in the visits table
     :param conn:
-    :param visit: a triple(place_id, beg, end)
+    :param visit: a triple(place_id, subject_id, beg, end)
     :return: visit id
     """
-    sql = ''' INSERT INTO visits(place_id, beg, end) VALUES(?,?,?) '''
+    sql = ''' INSERT INTO visits VALUES '''
     cur = conn.cursor()
     cur.execute(sql, visit)
     return cur.lastrowid
@@ -116,6 +149,18 @@ def delete_place(conn, id):
     :return:
     """
     sql = 'DELETE FROM places WHERE id=?'
+    cur = conn.cursor()
+    cur.execute(sql, (id,))
+    conn.commit()
+
+def delete_subject(conn, id):
+    """
+    Delete a subject by place id
+    :param conn:  Connection to the SQLite database
+    :param id: id of the subject
+    :return:
+    """
+    sql = 'DELETE FROM subjects WHERE id=?'
     cur = conn.cursor()
     cur.execute(sql, (id,))
     conn.commit()
@@ -139,6 +184,17 @@ def delete_all_places(conn):
     :return:
     """
     sql = 'DELETE FROM places'
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+
+def delete_all_subjects(conn):
+    """
+    Delete all rows in the subjects table
+    :param conn: Connection to the SQLite database
+    :return:
+    """
+    sql = 'DELETE FROM subjects'
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()
@@ -214,6 +270,19 @@ def select_all_places(conn):
 
     return cur.fetchall()
 
+def select_all_subjects(conn):
+    """
+    Select all rows in the subjects table
+    :param conn: Connection to the SQLite database
+    :return: all rows in subjects table
+    """
+
+    sql = 'SELECT * FROM subjects'
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
 def select_all_visits(conn):
     """
     Select all rows in the visits table
@@ -236,6 +305,6 @@ def select_visits_by_place(conn, place_id):
     """
 
     cur = conn.cursor()
-    cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
+    cur.execute("SELECT * FROM places WHERE place_id=?", (place_id,))
 
     return cur.fetchall()
