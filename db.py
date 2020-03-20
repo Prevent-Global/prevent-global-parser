@@ -169,7 +169,7 @@ def add_colocation(conn, colocation):
     :param colocation: a tuple(infected_id, subject_id, place_id, beg, end)
     :return: colocation id
     """
-    sql = '''INSERT INTO colocations(infected_id, subject_id, place_id, beg, end) VALUES (?, ?, ?, ?)'''
+    sql = '''INSERT INTO colocations(infected_id, subject_id, place_id, beg, end) VALUES (?, ?, ?, ?, ?)'''
     cur = conn.cursor()
     cur.execute(sql, colocation)
     return cur.lastrowid
@@ -376,6 +376,6 @@ def select_visits_by_place(conn, place_id):
     """
 
     cur = conn.cursor()
-    cur.execute("SELECT * FROM places WHERE id=?", (place_id,))
+    cur.execute('SELECT * FROM visits WHERE "place_id"=?', (place_id,))
 
     return cur.fetchall()

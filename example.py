@@ -1,3 +1,4 @@
+import json
 from parse import parse_subject_dir
 import os
 from glob import glob
@@ -14,9 +15,14 @@ def build_db():
 build_db()
 
 subject_history = glob('sample_files/2/*kml')
-s = subject(subject_history)
+with open('sample_files/2/subject_info.json', 'r') as f:
+    info = json.load(f)
 
-c = find_colocations(s)
+s = subject(subject_history, '2', info)
 
-for key in c.colocations:
-    print(c.colocations[key].address, c.colocations[key].timeline.intervals[0])
+colocations = find_colocations(s)
+
+with db.create_connection() as conn:
+    for c in colocations:
+        print(c.infected_id, c.subject_id, c.address, c.times)
+        db.add_colocation(conn, (c.infected_id, c.subject_id, c.place_id, *c.times))
