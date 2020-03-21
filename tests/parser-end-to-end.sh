@@ -8,7 +8,7 @@ time python3 example.py > ./tests/tmp-example-execution-output.txt
 echo
 
 echo "Output:"
-cat example-execution-output.txt
+cat ./tests/example-execution-output.txt
 echo
 
 #load to compare
@@ -25,6 +25,6 @@ then
   exit 0
 else
   echo -e "Test failed - Output is NOT correct. Expected:"
-  cat example-expected-output.txt
+  cat ./tests/example-expected-output.txt
   exit 1
 fi
