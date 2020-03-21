@@ -30,8 +30,8 @@ s = subject(subject_history, subject_id, info)
 print('find colocations')
 colocations = find_colocations(s)
 
-print('results: ')
+print('According to our database, user ' + subject_id + ' has been colocated with COVID-positive cases in the following instances: ')
 with db.create_connection() as conn:
     for c in colocations:
-        print(c.infected_id, c.subject_id, c.address, c.times)
+        print('At ' + c.address+'   for    ', int((c.times[1]-c.times[0])/60), ' minutes')
         db.add_colocation(conn, (c.infected_id, c.subject_id, c.place_id, *c.times))
