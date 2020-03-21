@@ -11,7 +11,7 @@ class visit:
 
 def compute_overlap(a, b):
     c = (max(a[0], b[0]), min(a[1], b[1]))
-    if c[0]!=c[1]:
+    if c[0]<c[1]:
         return c
     return None
 
