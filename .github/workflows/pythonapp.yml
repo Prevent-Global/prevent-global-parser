@@ -30,4 +30,6 @@ jobs:
       run: sqlite3 prevent.db ""
       
     - name: Run end-to-end test
+      env:
+        API_key: ${{secrets.maps_api_key}}
       run: bash tests/parser-end-to-end.sh
