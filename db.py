@@ -379,3 +379,6 @@ def select_visits_by_place(conn, place_id):
     cur.execute('SELECT * FROM visits WHERE "place_id"=?', (place_id,))
 
     return cur.fetchall()
+
+if __name__ == '__main__':
+    setup()
