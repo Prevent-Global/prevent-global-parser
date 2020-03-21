@@ -4,7 +4,7 @@ Backend application that parses gathered data about subjects (location history, 
 ## Install and run
 
 1. Install `sqlight3`
-1. In the project folder, create database `sqlight3 prevent.py`
+1. In the project folder, create database `sqlight3 prevent.db`
 1. Set a google maps API key as an environment variable `API_key`.
 1. Install packages `pip install -r requirements.txt`
 1. Run `python example.py`
