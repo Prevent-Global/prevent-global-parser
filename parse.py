@@ -65,7 +65,7 @@ def parse_file_add_to_db(filename, subject_id, info):
 
     visits = parse_file(filename)
     for v in visits:
-        place = (v[0][0]*1e7, v[0][1]*1e7, v[2])
+        place = (int(v[0][0]*1e7), int(v[0][1]*1e7), v[2])
         place_id = db.find_place_id(conn, place)
         if place_id is None:
             place_id = db.add_place(conn, place)
