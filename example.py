@@ -6,22 +6,30 @@ from glob import glob
 from colocations import subject, find_colocations
 import db
 
-def build_db():
+def build_db(subjects):
     os.remove('prevent.db')
     db.setup()
 
-    parse_subject_dir('sample_files/1')
+    for subject in subjects:
+        parse_subject_dir(subject)
 
-build_db()
+subjects_dirs = glob('generated_data/*')
+subject_dir, infected_dir = subjects_dirs[0], subjects_dirs[1:]
 
-subject_history = glob('sample_files/2/*kml')
-with open('sample_files/2/subject_info.json', 'r') as f:
+print('build db')
+build_db(infected_dir)
+
+print('init subject')
+subject_history = glob(subject_dir+'/*kml')
+subject_id = subject_dir.split('/')[-1]
+with open(subject_dir+'/subject_info.json', 'r') as f:
     info = json.load(f)
+s = subject(subject_history, subject_id, info)
 
-s = subject(subject_history, '2', info)
-
+print('find colocations')
 colocations = find_colocations(s)
 
+print('results: ')
 with db.create_connection() as conn:
     for c in colocations:
         print(c.infected_id, c.subject_id, c.address, c.times)
