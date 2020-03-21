@@ -8,7 +8,7 @@ time python3 example.py > ./tests/tmp-example-execution-output.txt
 echo
 
 echo "Output:"
-cat ./tests/example-execution-output.txt
+cat ./tests/tmp-example-execution-output.txt
 echo
 
 #load to compare
