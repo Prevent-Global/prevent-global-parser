@@ -1,0 +1,11 @@
+build db
+init subject
+find colocations
+According to our database, user 634149672 has been colocated with COVID-positive cases in the following instances: 
+At Pawia 5a, 31-154 Kraków, Poland   for     0  minutes
+At aleja 29 Listopada 39B, 31-425 Kraków, Poland   for     1  minutes
+At Henryka Siemiradzkiego 1, 31-137 Kraków, Poland   for     29  minutes
+At Rynek Główny 36, 31-013 Kraków, Poland   for     26  minutes
+At Świętego Tomasza 35, 31-027 Kraków, Poland   for     18  minutes
+At Prądnicka 50A, 31-201 Kraków, Poland   for     8  minutes
+At Bracka 4, 31-005 Kraków, Poland   for     22  minutes
