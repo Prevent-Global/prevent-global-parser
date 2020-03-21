@@ -40,10 +40,7 @@ def get_coordinates(node):
 
 
 def get_place(coordinates):
-    # Need to be reverted for the purpose of googlemaps API compatibility
-    # (BTW: wtf? It's exported from other Google service...)
-    coords = coordinates[1], coordinates[0]
-    return(gmaps.reverse_geocode(coords)[0]['formatted_address'])
+    return(gmaps.reverse_geocode(coordinates)[0]['formatted_address'])
 
 
 def parse_file(filename):
