@@ -7,7 +7,8 @@ from colocations import subject, find_colocations
 import db
 
 def build_db(subjects):
-    os.remove('prevent.db')
+    if os.path.exists('prevent.db'):
+        os.remove('prevent.db')
     db.setup()
 
     for subject in subjects:
