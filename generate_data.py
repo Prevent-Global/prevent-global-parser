@@ -36,7 +36,7 @@ def list_places_in_radius(center, radius):
     
     return bars+cafes+hospitals
 
-def generate_time_interval(day, max_len = 12):
+def generate_time_interval(day, max_len = 2):
     date = '2020-03-'+str(day).zfill(2)
     h, m, s = np.random.randint(0,24-max_len), np.random.randint(0,60), np.random.randint(0,60)
     start = str(h).zfill(2)+':'+str(m).zfill(2)+':'+str(s).zfill(2)
@@ -50,7 +50,7 @@ def generate_file(day, coords_list, base_file_path, output_path):
     doc = load_KML(base_file_path)
     for child in doc[0]:
         if child.tag.split('}')[1] == 'Placemark':
-            interval = generate_time_interval(day, max_len = 12)
+            interval = generate_time_interval(day, max_len = 2)
             child[3].text = interval
             coords = np.random.choice(coords_list)
             child[4][0].text = coords
