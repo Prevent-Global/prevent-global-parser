@@ -25,9 +25,6 @@ jobs:
         python3 -m pip install --upgrade pip
         pip3 install -r requirements.txt
         sudo apt-get install sqlite3 -y
-  
-    - name: Create DB
-      run: sqlite3 prevent.db ""
       
     - name: Run end-to-end test
       env:
