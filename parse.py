@@ -1,4 +1,6 @@
 import json
+from joblib import Parallel, delayed
+from multiprocessing import cpu_count
 from glob import glob
 from pykml import parser
 from lxml import etree
@@ -37,11 +39,11 @@ def get_coordinates(node):
     return (lat, lon)
 
 
-def get_place(node):
-# Need to be reverted for the purpose of googlemaps API compatibility
-# (BTW: wtf? It's exported from other Google service...)
-    coordinates = node[4][0].text.split(',')[1]+','+node[4][0].text.split(',')[0]
-    return(gmaps.reverse_geocode(coordinates)[0]['formatted_address'])
+def get_place(coordinates):
+    # Need to be reverted for the purpose of googlemaps API compatibility
+    # (BTW: wtf? It's exported from other Google service...)
+    coords = coordinates[1], coordinates[0]
+    return(gmaps.reverse_geocode(coords)[0]['formatted_address'])
 
 
 def parse_file(filename):
@@ -49,11 +51,14 @@ def parse_file(filename):
     visits  = []
     doc = load_KML(filename)[0]
     for child in doc:
-        if child.tag.split('}')[1] == 'Placemark':
-# Searching for double space is a dirty trick, bt there is no keyword like 'visit' or 'stay;
-# We need to check whether it work on files exported for other people as well
-            if child[3].text.startswith('  '):
-                visits.append((get_coordinates(child), get_times(child), get_place(child)))
+        if child.tag.split('}')[1] == 'Placemark' and child[3].text.startswith('  '):
+        # Searching for double space is a dirty trick, bt there is no keyword like 'visit' or 'stay;
+        # We need to check whether it work on files exported for other people as well
+            visits.append((get_coordinates(child), get_times(child)))
+
+    addresses = Parallel(n_jobs=cpu_count())(delayed(get_place)(v[0]) for v in visits)
+    for i, address in enumerate(addresses):
+        visits[i] += (address,)
 
     return visits
 
