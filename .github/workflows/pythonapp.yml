@@ -27,7 +27,7 @@ jobs:
         sudo apt-get install sqlite3 -y
   
     - name: Create DB
-      run: litesql3 prevent.db ""
+      run: sqlite3 prevent.db ""
       
     - name: Run end-to-end test
       run: bash tests/parser-end-to-end.sh
