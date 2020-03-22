@@ -1,4 +1,4 @@
-# Prevent Global Parser
+# Privent Parser
 ![Python CI](https://github.com/Prevent-Global/prevent-global-parser/workflows/Python%20CI/badge.svg)
 
 Backend application that parses gathered data about subjects (location history, symptoms, information about recent COVID-19 test) and calculates colocation data.
