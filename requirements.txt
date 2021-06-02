@@ -6,4 +6,4 @@ joblib==0.14.1
 lxml==4.5.0
 pykml==0.2.0
 requests==2.23.0
-urllib3==1.25.8
+urllib3==1.26.5
